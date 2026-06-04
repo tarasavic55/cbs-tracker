@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBS Systems — Tracker prisustva 2026</title>
+<style>
+:root{
+  --bg:oklch(0.972 0.003 255);--card:#fff;--line:oklch(0.918 0.005 255);
+  --line-soft:oklch(0.952 0.004 255);--ink:oklch(0.28 0.02 262);
+  --ink-2:oklch(0.44 0.018 262);--muted:oklch(0.60 0.014 260);--faint:oklch(0.74 0.01 260);
+  --office:oklch(0.60 0.13 155);--office-tint:oklch(0.955 0.035 155);--office-ink:oklch(0.43 0.10 158);
+  --home:oklch(0.56 0.155 300);--home-tint:oklch(0.955 0.038 300);--home-ink:oklch(0.46 0.15 300);
+  --vac:oklch(0.60 0.135 248);--vac-tint:oklch(0.955 0.04 248);--vac-ink:oklch(0.47 0.13 250);
+  --sick:oklch(0.61 0.18 25);--sick-tint:oklch(0.955 0.04 25);--sick-ink:oklch(0.51 0.16 27);
+  --weekend:oklch(0.955 0.003 255);--radius:12px;
+  --shadow:0 1px 2px oklch(0.5 0.02 260/.06),0 4px 14px oklch(0.5 0.02 260/.05);
+  --shadow-sm:0 1px 2px oklch(0.5 0.02 260/.07);
+  --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;}
+.wrap{max-width:1320px;margin:0 auto;padding:22px 26px 56px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:13px;}
+.logo{width:42px;height:42px;border-radius:11px;flex:none;background:linear-gradient(150deg,var(--ink) 0%,oklch(0.36 0.04 262) 100%);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);}
+.brand h1{font-size:18px;margin:0;font-weight:600;letter-spacing:-0.01em;}
+.brand p{margin:1px 0 0;font-size:12.5px;color:var(--muted);font-weight:500;}
+.search{position:relative;}
+.search input{width:248px;max-width:54vw;height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:0 14px 0 38px;font:inherit;font-size:13.5px;color:var(--ink);box-shadow:var(--shadow-sm);transition:border-color .15s,box-shadow .15s;}
+.search input::placeholder{color:var(--faint);}
+.search input:focus{outline:none;border-color:var(--vac);box-shadow:0 0 0 3px var(--vac-tint);}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--faint);pointer-events:none;}
+.search .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--faint);cursor:pointer;width:24px;height:24px;border-radius:6px;display:none;font-size:16px;line-height:1;}
+.search .clr:hover{background:var(--line-soft);color:var(--ink-2);}
+.search.has-val .clr{display:grid;place-items:center;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:2px;}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c);}
+.stat .n{font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:var(--c-ink);font-variant-numeric:tabular-nums;}
+.stat .l{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:550;color:var(--ink-2);margin-top:7px;}
+.stat .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none;}
+.stat.office{--c:var(--office);--c-ink:var(--office-ink);}
+.stat.home{--c:var(--home);--c-ink:var(--home-ink);}
+.stat.vac{--c:var(--vac);--c-ink:var(--vac-ink);}
+.stat.sick{--c:var(--sick);--c-ink:var(--sick-ink);}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.seg{display:flex;background:oklch(0.93 0.004 255);border-radius:10px;padding:3px;gap:2px;}
+.seg button{border:none;background:none;font:inherit;font-size:13.5px;font-weight:550;color:var(--ink-2);padding:7px 18px;border-radius:8px;cursor:pointer;transition:all .14s;}
+.seg button:hover{color:var(--ink);}
+.seg button.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm);}
+.datenav{display:flex;align-items:center;gap:8px;}
+.datenav .lbl{font-size:14px;font-weight:600;color:var(--ink);min-width:170px;text-align:center;text-transform:capitalize;}
+.navbtn{width:34px;height:34px;border:1px solid var(--line);background:var(--card);border-radius:9px;cursor:pointer;display:grid;place-items:center;color:var(--ink-2);box-shadow:var(--shadow-sm);transition:all .14s;}
+.navbtn:hover{border-color:var(--faint);color:var(--ink);}
+.navbtn svg{width:16px;height:16px;}
+.today-btn{height:34px;padding:0 14px;border:1px solid var(--line);background:var(--card);border-radius:9px;cursor:pointer;font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);box-shadow:var(--shadow-sm);transition:all .14s;}
+.today-btn:hover{border-color:var(--faint);color:var(--ink);}
+.legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:550;color:var(--ink-2);}
+.leg .sw{width:13px;height:13px;border-radius:4px;flex:none;border:1px solid oklch(0 0 0/.05);}
+.leg.office .sw{background:var(--office);}
+.leg.home .sw{background:var(--home);}
+.leg.vac .sw{background:var(--vac);}
+.leg.sick .sw{background:var(--sick);}
+.leg.weekend .sw{background:repeating-linear-gradient(45deg,var(--weekend),var(--weekend) 3px,oklch(0.9 0.004 255) 3px,oklch(0.9 0.004 255) 6px);}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;}
+.col{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.col-head{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line-soft);background:var(--col-tint);}
+.col-head .cdot{width:10px;height:10px;border-radius:50%;background:var(--col-c);flex:none;}
+.col-head .ctitle{font-size:13.5px;font-weight:650;color:var(--col-ink);flex:1;}
+.col-head .ccount{font-size:13px;font-weight:700;color:var(--col-ink);background:var(--card);border:1px solid var(--line);border-radius:20px;min-width:26px;height:23px;padding:0 8px;display:grid;place-items:center;font-variant-numeric:tabular-nums;}
+.col.office{--col-c:var(--office);--col-tint:var(--office-tint);--col-ink:var(--office-ink);}
+.col.home{--col-c:var(--home);--col-tint:var(--home-tint);--col-ink:var(--home-ink);}
+.col.vac{--col-c:var(--vac);--col-tint:var(--vac-tint);--col-ink:var(--vac-ink);}
+.col.sick{--col-c:var(--sick);--col-tint:var(--sick-tint);--col-ink:var(--sick-ink);}
+.col-body{padding:8px;display:flex;flex-direction:column;gap:4px;min-height:60px;max-height:62vh;overflow-y:auto;}
+.person{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:9px;transition:background .12s;}
+.person:hover{background:var(--line-soft);}
+.ava{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:11.5px;font-weight:650;background:var(--col-tint);color:var(--col-ink);letter-spacing:0.2px;}
+.person .nm{font-size:13.5px;font-weight:520;color:var(--ink);}
+.person .tag{font-size:10px;background:var(--home-tint);color:var(--home-ink);border-radius:4px;padding:1px 5px;margin-left:auto;font-weight:600;}
+.empty{padding:18px 10px;text-align:center;color:var(--faint);font-size:12.5px;font-style:italic;}
+.weekend-state{grid-column:1/-1;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:48px 24px;text-align:center;}
+.weekend-state .big{font-size:17px;font-weight:650;color:var(--ink);margin-bottom:6px;}
+.weekend-state .sub{font-size:13.5px;color:var(--muted);}
+.weekend-state .ico{width:46px;height:46px;border-radius:13px;margin:0 auto 14px;display:grid;place-items:center;background-image:repeating-linear-gradient(45deg,var(--weekend),var(--weekend) 4px,oklch(0.9 0.004 255) 4px,oklch(0.9 0.004 255) 8px);}
+.cal-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.cal-scroll{overflow:auto;max-height:72vh;}
+table.cal{border-collapse:separate;border-spacing:0;width:100%;}
+table.cal th,table.cal td{padding:0;margin:0;}
+.cal .name-h,.cal .name-c{position:sticky;left:0;z-index:3;background:var(--card);text-align:left;min-width:184px;width:184px;padding:0 14px;border-right:1px solid var(--line);}
+.cal thead th{position:sticky;top:0;z-index:2;background:var(--card);border-bottom:1px solid var(--line);}
+.cal .name-h{z-index:4;border-bottom:1px solid var(--line);font-size:12px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;height:50px;vertical-align:middle;}
+.cal .day-h{min-width:30px;width:30px;height:50px;text-align:center;vertical-align:middle;}
+.cal .day-h .dn{font-size:13px;font-weight:620;color:var(--ink-2);font-variant-numeric:tabular-nums;line-height:1.1;}
+.cal .day-h .wd{font-size:9.5px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:0.02em;}
+.cal .day-h.we .dn,.cal .day-h.we .wd{color:var(--faint);}
+.cal .day-h.we{background:var(--weekend);}
+.cal .day-h.sel{background:var(--vac-tint);}
+.cal .day-h.sel .dn{color:var(--vac-ink);}
+.cal tbody tr{height:34px;}
+.cal tbody tr:hover .name-c{background:var(--line-soft);}
+.cal .name-c{font-size:13px;font-weight:520;color:var(--ink);height:34px;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--line-soft);}
+.cal .cell{width:30px;height:34px;text-align:center;vertical-align:middle;border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);font-size:11px;font-weight:700;}
+.cal .cell.sel{box-shadow:inset 0 0 0 2px var(--vac);}
+.cal .cell.office{background:var(--office-tint);}
+.cal .cell.home{background:var(--home-tint);color:var(--home-ink);}
+.cal .cell.vac{background:var(--vac-tint);color:var(--vac-ink);}
+.cal .cell.sick{background:var(--sick-tint);color:var(--sick-ink);}
+.cal .cell.weekend{background:repeating-linear-gradient(45deg,var(--weekend),var(--weekend) 4px,oklch(0.93 0.004 255) 4px,oklch(0.93 0.004 255) 8px);}
+.cal .cell .ltr{display:inline-block;}
+.no-results{padding:40px;text-align:center;color:var(--muted);font-size:13.5px;}
+.note-banner{margin-top:14px;background:var(--home-tint);border:1px solid oklch(0.85 0.05 300);border-radius:9px;padding:9px 14px;font-size:12px;color:var(--home-ink);display:flex;align-items:center;gap:8px;}
+.note-banner svg{flex:none;width:15px;height:15px;}
+.footnote{margin-top:18px;font-size:11.5px;color:var(--faint);text-align:center;}
+.footnote b{color:var(--muted);font-weight:600;}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr);}.kanban{grid-template-columns:1fr 1fr;}.controls{flex-direction:column;align-items:stretch;}.legend{justify-content:center;}}
+@media(max-width:560px){.kanban{grid-template-columns:1fr;}.wrap{padding:16px 14px 40px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">CBS</div>
+      <div>
+        <h1>Tracker prisustva</h1>
+        <p>CBS Systems · 2026</p>
+      </div>
+    </div>
+    <div class="search" id="searchWrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="search" placeholder="Pretraži zaposlene…" autocomplete="off">
+      <button class="clr" id="clearSearch" title="Obriši">×</button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="controls">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div class="seg" id="seg">
+        <button data-view="today" class="active">Danas</button>
+        <button data-view="cal">Kalendar</button>
+      </div>
+      <div class="datenav" id="datenav"></div>
+    </div>
+    <div class="legend">
+      <div class="leg office"><span class="sw"></span>U kancelariji</div>
+      <div class="leg home"><span class="sw"></span>Od kuće</div>
+      <div class="leg vac"><span class="sw"></span>Na odmoru</div>
+      <div class="leg sick"><span class="sw"></span>Bolovanje</div>
+      <div class="leg weekend"><span class="sw"></span>Vikend</div>
+    </div>
+  </div>
+  <div id="content"></div>
+  <div class="note-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    <span><b>Marko Raca</b> i <b>Miloš Rusov</b> rade uglavnom od kuće — prikazani su kao "Od kuće" osim ako nisu na odmoru ili bolovanju.</span>
+  </div>
+  <div class="footnote">Izvor: <b>W_Home</b>, <b>Vacation</b> i <b>Sick</b> tracker 2026 · Ko nije označen = u kancelariji</div>
+</div>
+
+<script>
+const DATA = {"1-28":{"Aleksandar Savić":"home","Anja Manola":"home","Bogdan Sliskovic":"home","Marko Raca":"home","Milan Đuričić":"home","Nikola Baltić":"home"},"1-5":{"Anja Manola":"home","Jelena Jelić":"home","Milan Đuričić":"home","Miloš Vlaisavljević":"home","Nenad Grubanović":"home","Bogdan Sliskovic":"vacation","Jovana Goranović":"vacation","Miloš Rusov":"vacation","Nikola Pavlović":"sick"},"1-13":{"Bogdan Sliskovic":"home","Milan Đuričić":"home","Miloš Vlaisavljević":"home","Nikola Pavlović":"home","Jovana Goranović":"sick"},"1-22":{"Jelena Jelić":"home","Nenad Grubanović":"home","Nikola Baltić":"home","Milan Đuričić":"vacation"},"1-26":{"Jelena Jelić":"home","Milan Đuričić":"home","Nenad Grubanović":"home","Nikola Pavlović":"home"},"1-8":{"Milan Đuričić":"home","Miloš Vlaisavljević":"home","Nenad Grubanović":"home","Predrag Popov":"home","Bogdan Sliskovic":"vacation","Jovana Goranović":"vacation"},"1-9":{"Miloš Vlaisavljević":"home","Nenad Grubanović":"home","Nikola Baltić":"home","Predrag Popov":"home","Bogdan Sliskovic":"vacation","Jovana Goranović":"vacation"},"1-12":{"Miloš Vlaisavljević":"home","Nikola Baltić":"home","Nikola Pavlović":"home","Jovana Goranović":"sick"},"1-23":{"Nenad Grubanović":"home","Nikola Baltić":"home","Milan Đuričić":"vacation"},"1-14":{"Nikola Baltić":"home","Jovana Goranović":"sick"},"1-15":{"Nikola Baltić":"home","Jovana Goranović":"sick","Marko Vuković":"sick"},"1-16":{"Nikola Baltić":"home","Milan Đuričić":"vacation","Jovana Goranović":"sick"},"1-19":{"Nikola Baltić":"home","Milan Đuričić":"vacation"},"1-20":{"Nikola Baltić":"home","Milan Đuričić":"vacation"},"1-21":{"Nikola Baltić":"home","Milan Đuričić":"vacation"},"1-30":{"Nikola Pavlović":"home"},"1-27":{"Stefan Pešić":"home"},"2-10":{"Anja Manola":"home","Boris Manola":"home","Milan Đuričić":"home","Jovana Goranović":"vacation","Nenad Grubanović":"vacation"},"2-18":{"Anja Manola":"home","Bogdan Sliskovic":"home","Jovana Goranović":"vacation","Marko Raca":"vacation","Nikola Pavlović":"vacation"},"2-2":{"Bogdan Sliskovic":"home","Predrag Popov":"home"},"2-3":{"Bogdan Sliskovic":"home","Milan Đuričić":"home","Miloš Vlaisavljević":"home"},"2-9":{"Bogdan Sliskovic":"home","Nenad Grubanović":"vacation"},"2-25":{"Bogdan Sliskovic":"home","Jovana Goranović":"home","Predrag Popov":"vacation"},"2-27":{"Bogdan Sliskovic":"home","Miloš Vlaisavljević":"home","Jovana Goranović":"sick"},"2-12":{"Milan Đuričić":"home","Nenad Grubanović":"vacation"},"2-20":{"Milan Đuričić":"home","Predrag Popov":"home","Jovana Goranović":"vacation","Marko Raca":"vacation","Nikola Pavlović":"vacation"},"2-23":{"Miloš Vlaisavljević":"home","Nenad Grubanović":"home","Nikola Pavlović":"home","Nikola Baltić":"vacation"},"2-4":{"Nenad Grubanović":"home"},"2-24":{"Nenad Grubanović":"home","Marko Vuković":"sick"},"2-26":{"Nikola Pavlović":"home"},"2-11":{"Predrag Popov":"home","Bogdan Sliskovic":"vacation","Nenad Grubanović":"vacation"},"2-19":{"Stefan Pešić":"home","Jovana Goranović":"vacation","Marko Raca":"vacation","Nikola Pavlović":"vacation"},"3-13":{"Aleksandar Savić":"home","Anja Manola":"vacation","Miloš Vlaisavljević":"vacation"},"3-24":{"Aleksandar Savić":"home","Miodrag Bakić":"home","Predrag Popov":"vacation"},"3-31":{"Aleksandar Savić":"home"},"3-18":{"Anja Manola":"home","Bogdan Sliskovic":"vacation","Miloš Vlaisavljević":"vacation","Nikola Pavlović":"vacation"},"3-25":{"Anja Manola":"home","Bogdan Sliskovic":"home"},"3-4":{"Bogdan Sliskovic":"home"},"3-5":{"Bogdan Sliskovic":"home"},"3-6":{"Bogdan Sliskovic":"home","Jelena Jelić":"home","Miloš Rusov":"sick"},"3-16":{"Bogdan Sliskovic":"home","Anja Manola":"vacation","Miloš Vlaisavljević":"vacation"},"3-26":{"Bogdan Sliskovic":"home"},"3-27":{"Bogdan Sliskovic":"home"},"3-3":{"Milan Đuričić":"home","Predrag Popov":"home"},"3-23":{"Miodrag Bakić":"home"},"3-20":{"Nenad Grubanović":"home","Predrag Popov":"home","Bogdan Sliskovic":"vacation","Marko Raca":"vacation","Nikola Pavlović":"vacation"},"3-30":{"Nenad Grubanović":"home","Marko Vuković":"sick"},"3-17":{"Stefan Pešić":"home","Anja Manola":"vacation","Bogdan Sliskovic":"vacation","Miloš Vlaisavljević":"vacation","Nikola Pavlović":"vacation"},"4-14":{"Anja Manola":"home","Bogdan Sliskovic":"home","Nikola Baltić":"sick"},"4-23":{"Anja Manola":"home","Bogdan Sliskovic":"home","Milan Đuričić":"home","Miodrag Bakić":"home"},"4-1":{"Bogdan Sliskovic":"home"},"4-2":{"Bogdan Sliskovic":"home","Miloš Vlaisavljević":"home","Ivan Hornjak":"home"},"4-3":{"Bogdan Sliskovic":"home","Miloš Vlaisavljević":"home"},"4-7":{"Bogdan Sliskovic":"home","Milan Đuričić":"home","Predrag Popov":"vacation"},"4-8":{"Bogdan Sliskovic":"home"},"4-16":{"Bogdan Sliskovic":"home","Milan Nikolić":"home","Nikola Baltić":"home"},"4-17":{"Bogdan Sliskovic":"home","Milan Nikolić":"home","Nikola Baltić":"home"},"4-22":{"Bogdan Sliskovic":"home"},"4-24":{"Bogdan Sliskovic":"home","Mirjana Savic":"home","Tara Savic":"home"},"4-28":{"Bogdan Sliskovic":"home"},"4-30":{"Bogdan Sliskovic":"home","Miloš Vlaisavljević":"home","Nikola Baltić":"home","Predrag Popov":"home","Ivan Hornjak":"home"},"4-20":{"Boris Manola":"home","Nenad Grubanović":"home"},"4-27":{"Boris Manola":"home","Nenad Grubanović":"vacation"},"4-9":{"Nikola Baltić":"home","Miloš Rusov":"vacation"},"4-15":{"Nikola Baltić":"home"},"4-6":{"Nikola Pavlović":"home","Predrag Popov":"home"},"4-21":{"Nikola Pavlović":"home","Predrag Popov":"home","Ivan Hornjak":"home"},"5-7":{"Anja Manola":"home","Bogdan Sliskovic":"home","Jelena Jelić":"home","Miloš Vlaisavljević":"home"},"5-5":{"Bogdan Sliskovic":"home","Miloš Vlaisavljević":"sick"},"5-6":{"Bogdan Sliskovic":"home","Jelena Jelić":"home","Milan Đuričić":"home","Miloš Vlaisavljević":"home"},"5-14":{"Bogdan Sliskovic":"home","Nenad Grubanović":"home","Jovana Radakovic":"vacation","Marko Vuković":"sick"},"5-15":{"Bogdan Sliskovic":"home","Ivan Hornjak":"home","Mirjana Savic":"home","Jovana Radakovic":"vacation"},"5-20":{"Bogdan Sliskovic":"home","Nikola Baltić":"home","Stefan Pešić":"home","Jovana Radakovic":"vacation"},"5-21":{"Bogdan Sliskovic":"home","Predrag Popov":"home","Nikola Pavlović":"vacation"},"5-22":{"Bogdan Sliskovic":"home","Predrag Popov":"home","Ivan Hornjak":"home","Mirjana Savic":"home","Nikola Pavlović":"vacation"},"5-27":{"Bogdan Sliskovic":"home"},"5-28":{"Bogdan Sliskovic":"home","Predrag Popov":"home","Ivan Hornjak":"home"},"5-8":{"Jelena Jelić":"home","Miloš Vlaisavljević":"home","Ivan Hornjak":"home","Anja Manola":"vacation"},"5-4":{"Miloš Vlaisavljević":"home","Nenad Grubanović":"home","Nikola Baltić":"home","Ivan Hornjak":"home","Marko Raca":"vacation","Nikola Pavlović":"sick"},"5-25":{"Nenad Grubanović":"home","Ivan Hornjak":"home","Bogdan Sliskovic":"vacation","Nikola Pavlović":"vacation"},"5-19":{"Nikola Baltić":"home","Ivan Hornjak":"home","Jovana Radakovic":"vacation"},"5-12":{"Ivan Hornjak":"home","Bogdan Sliskovic":"vacation"},"6-2":{"Bogdan Sliskovic":"home","Ivan Hornjak":"home","Predrag Popov":"vacation","Boris Manola":"sick"},"6-3":{"Bogdan Sliskovic":"home","Predrag Popov":"vacation"},"6-1":{"Boris Manola":"home","Miodrag Bakić":"home","Nikola Pavlović":"home","Predrag Popov":"vacation"},"6-4":{"Ivan Hornjak":"home","Predrag Popov":"vacation"},"2-13":{"Jelena Jelić":"vacation","Nenad Grubanović":"vacation"},"2-6":{"Nikola Pavlović":"vacation"},"3-9":{"Anja Manola":"vacation","Miloš Vlaisavljević":"vacation"},"3-10":{"Anja Manola":"vacation","Miloš Vlaisavljević":"vacation"},"3-11":{"Anja Manola":"vacation","Miloš Vlaisavljević":"vacation","Jovana Goranović":"sick"},"3-12":{"Anja Manola":"vacation","Miloš Vlaisavljević":"vacation"},"3-19":{"Bogdan Sliskovic":"vacation","Nikola Pavlović":"vacation"},"5-11":{"Bogdan Sliskovic":"vacation","Nikola Baltić":"vacation"},"5-26":{"Bogdan Sliskovic":"vacation","Nikola Pavlović":"sick"},"5-29":{"Marko Vuković":"vacation"},"5-18":{"Nikola Baltić":"vacation","Jovana Radakovic":"vacation"},"5-13":{"Jovana Radakovic":"vacation"},"6-15":{"Aleksandar Savić":"vacation"},"6-16":{"Aleksandar Savić":"vacation"},"6-17":{"Aleksandar Savić":"vacation"},"6-18":{"Aleksandar Savić":"vacation"},"6-19":{"Aleksandar Savić":"vacation"},"6-5":{"Miloš Rusov":"vacation","Predrag Popov":"vacation"},"6-8":{"Miloš Rusov":"vacation","Predrag Popov":"vacation"},"6-9":{"Predrag Popov":"vacation"},"6-10":{"Predrag Popov":"vacation"},"6-11":{"Predrag Popov":"vacation"},"6-12":{"Predrag Popov":"vacation"},"3-2":{"Predrag Popov":"sick"}};
+
+const EMPLOYEES = ["Aleksandar Savić","Anja Manola","Bogdan Sliskovic","Boris Manola","Jelena Jelić","Jovana Goranović","Marko Raca","Marko Vuković","Milan Bjeloglav","Milan Nikolić","Milan Đuričić","Miloš Rusov","Miloš Vlaisavljević","Miodrag Bakić","Nenad Grubanović","Nikola Baltić","Nikola Pavlović","Predrag Popov","Stefan Pešić","Ivan Hornjak","Mirjana Savic","Tara Savic","Jovana Radakovic","Matija Rasovic"];
+const DEFAULT_HOME = ["Marko Raca","Miloš Rusov"];
+const MONTH_NAMES = ["Januar","Februar","Mart","April","Maj","Jun","Jul","Avgust","Septembar","Oktobar","Novembar","Decembar"];
+const WD_SHORT = ["Ne","Po","Ut","Sr","Če","Pe","Su"];
+const DOW_NAMES = ["nedelja","ponedeljak","utorak","sreda","četvrtak","petak","subota"];
+const YEAR = 2026;
+const STATUS = {
+  office:{key:"office",label:"U kancelariji",short:"",cls:"office"},
+  home:{key:"home",label:"Od kuće",short:"K",cls:"home"},
+  vacation:{key:"vacation",label:"Na odmoru",short:"O",cls:"vac"},
+  sick:{key:"sick",label:"Bolovanje",short:"B",cls:"sick"},
+};
+const COL_ORDER = ["office","home","vacation","sick"];
+
+function daysInMonth(m){return new Date(YEAR,m+1,0).getDate();}
+function dow(m,d){return new Date(YEAR,m,d).getDay();}
+function isWeekend(m,d){const w=dow(m,d);return w===0||w===6;}
+function initials(name){const p=name.trim().split(/\s+/);return((p[0]||"")[0]||"")+((p[p.length-1]||"")[0]||"");}
+
+function statusOf(name,m,d){
+  if(isWeekend(m,d)) return "weekend";
+  const key=`${m+1}-${d}`;
+  const dayData=DATA[key]||{};
+  if(dayData[name]==="sick") return "sick";
+  if(dayData[name]==="vacation") return "vacation";
+  if(dayData[name]==="home") return "home";
+  if(DEFAULT_HOME.includes(name)) return "home";
+  return "office";
+}
+
+const now=new Date();
+const state={
+  view:"today",
+  selM:(now.getFullYear()===YEAR?now.getMonth():5),
+  selD:(now.getFullYear()===YEAR?now.getDate():4),
+  calM:(now.getFullYear()===YEAR?now.getMonth():5),
+  query:"",
+};
+if(state.selD>daysInMonth(state.selM)) state.selD=daysInMonth(state.selM);
+
+function filteredEmployees(){
+  const q=state.query.trim().toLowerCase();
+  if(!q) return EMPLOYEES;
+  return EMPLOYEES.filter(n=>n.toLowerCase().includes(q));
+}
+
+function renderStats(){
+  const wknd=isWeekend(state.selM,state.selD);
+  const counts={office:0,home:0,vacation:0,sick:0};
+  if(!wknd){for(const n of EMPLOYEES){counts[statusOf(n,state.selM,state.selD)]++;}}
+  document.getElementById("stats").innerHTML=COL_ORDER.map(k=>{
+    const s=STATUS[k];const val=wknd?"–":counts[k];
+    return`<div class="stat ${s.cls}"><div class="n">${val}</div><div class="l"><span class="dot"></span>${s.label}</div></div>`;
+  }).join("");
+}
+
+function renderDateNav(){
+  const el=document.getElementById("datenav");
+  if(state.view==="today"){
+    const w=dow(state.selM,state.selD);
+    const lbl=`${cap(DOW_NAMES[w])}, ${state.selD}. ${MONTH_NAMES[state.selM].toLowerCase()}`;
+    el.innerHTML=`<button class="navbtn" id="prevDay">${arrow("l")}</button><span class="lbl">${lbl}</span><button class="navbtn" id="nextDay">${arrow("r")}</button><button class="today-btn" id="todayBtn">Danas</button>`;
+    document.getElementById("prevDay").onclick=()=>shiftDay(-1);
+    document.getElementById("nextDay").onclick=()=>shiftDay(1);
+    document.getElementById("todayBtn").onclick=goToday;
+  } else {
+    el.innerHTML=`<button class="navbtn" id="prevMon">${arrow("l")}</button><span class="lbl">${MONTH_NAMES[state.calM]} ${YEAR}</span><button class="navbtn" id="nextMon">${arrow("r")}</button>`;
+    document.getElementById("prevMon").onclick=()=>shiftMonth(-1);
+    document.getElementById("nextMon").onclick=()=>shiftMonth(1);
+  }
+}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function arrow(dir){const d=dir==="l"?"M15 18l-6-6 6-6":"M9 6l6 6-6 6";return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;}
+function shiftDay(delta){let d=state.selD+delta,m=state.selM;while(d<1){m=(m+11)%12;d+=daysInMonth(m);}while(d>daysInMonth(m)){d-=daysInMonth(m);m=(m+1)%12;}state.selD=d;state.selM=m;state.calM=m;render();}
+function goToday(){if(now.getFullYear()===YEAR){state.selM=now.getMonth();state.selD=now.getDate();}else{state.selM=5;state.selD=4;}if(state.selD>daysInMonth(state.selM))state.selD=daysInMonth(state.selM);state.calM=state.selM;render();}
+function shiftMonth(delta){state.calM=(state.calM+delta+12)%12;render();}
+
+function renderKanban(){
+  const emps=filteredEmployees();
+  if(isWeekend(state.selM,state.selD)){
+    return`<div class="kanban"><div class="weekend-state"><div class="ico">${weekendIcon()}</div><div class="big">Vikend — neradni dan</div><div class="sub">${cap(DOW_NAMES[dow(state.selM,state.selD)])}, ${state.selD}. ${MONTH_NAMES[state.selM].toLowerCase()} ${YEAR}</div></div></div>`;
+  }
+  const buckets={office:[],home:[],vacation:[],sick:[]};
+  for(const n of emps){buckets[statusOf(n,state.selM,state.selD)].push(n);}
+  return`<div class="kanban">`+COL_ORDER.map(k=>{
+    const s=STATUS[k];const list=buckets[k];
+    const cards=list.length?list.map(n=>{
+      const isDefHome=DEFAULT_HOME.includes(n)&&k==="home";
+      const tag=isDefHome?`<span class="tag">stalno WFH</span>`:"";
+      return`<div class="person"><div class="ava">${initials(n)}</div><div class="nm">${n}</div>${tag}</div>`;
+    }).join(""):`<div class="empty">${state.query?"Nema rezultata":"Niko"}</div>`;
+    return`<div class="col ${s.cls}"><div class="col-head"><span class="cdot"></span><span class="ctitle">${s.label}</span><span class="ccount">${list.length}</span></div><div class="col-body">${cards}</div></div>`;
+  }).join("")+`</div>`;
+}
+function weekendIcon(){return`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>`;}
+
+function renderCalendar(){
+  const emps=filteredEmployees();const m=state.calM;const nd=daysInMonth(m);const selDayActive=(m===state.selM);
+  let head=`<tr><th class="name-h">Zaposleni</th>`;
+  for(let d=1;d<=nd;d++){const we=isWeekend(m,d);const sel=selDayActive&&d===state.selD;head+=`<th class="day-h${we?" we":""}${sel?" sel":""}"><div class="dn">${d}</div><div class="wd">${WD_SHORT[dow(m,d)]}</div></th>`;}
+  head+=`</tr>`;
+  let rows="";
+  if(emps.length===0){rows=`<tr><td class="name-c">—</td><td colspan="${nd}"><div class="no-results">Nema zaposlenih koji odgovaraju pretrazi.</div></td></tr>`;}
+  else{for(const n of emps){let r=`<tr><td class="name-c" title="${n}">${n}</td>`;for(let d=1;d<=nd;d++){const st=statusOf(n,m,d);const sel=selDayActive&&d===state.selD?" sel":"";const cls=STATUS[st]?STATUS[st].cls:st;const ltr=STATUS[st]?STATUS[st].short:"";const tip=st==="weekend"?`${n} · ${d}. ${MONTH_NAMES[m].toLowerCase()} · vikend`:`${n} · ${d}. ${MONTH_NAMES[m].toLowerCase()} · ${STATUS[st].label}`;r+=`<td class="cell ${cls}${sel}" title="${tip}">${ltr?`<span class="ltr">${ltr}</span>`:""}</td>`;}r+=`</tr>`;rows+=r;}}
+  return`<div class="cal-wrap"><div class="cal-scroll"><table class="cal"><thead>${head}</thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function render(){
+  renderStats();renderDateNav();
+  document.querySelectorAll("#seg button").forEach(b=>{b.classList.toggle("active",b.dataset.view===state.view);});
+  document.getElementById("content").innerHTML=state.view==="today"?renderKanban():renderCalendar();
+}
+
+document.querySelectorAll("#seg button").forEach(b=>{b.onclick=()=>{state.view=b.dataset.view;render();};});
+const searchInput=document.getElementById("search");
+const searchWrap=document.getElementById("searchWrap");
+searchInput.addEventListener("input",()=>{state.query=searchInput.value;searchWrap.classList.toggle("has-val",!!searchInput.value);render();});
+document.getElementById("clearSearch").onclick=()=>{searchInput.value="";state.query="";searchWrap.classList.remove("has-val");render();searchInput.focus();};
+
+render();
+</script>
+</body>
+</html>
